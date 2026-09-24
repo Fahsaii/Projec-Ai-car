@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <title>Vehicle Classification</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+    
+    <style>
+      /* --- Custom Styles for the Design Template --- */
+      :root {
+        --primary-color: #000;
+        --secondary-color: #fff;
+        --accent-color: #ff6600; /* Bright Orange */
+        --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+
+      body {
+        background-color: var(--secondary-color);
+        color: var(--primary-color);
+        font-family: var(--font-main);
+        margin: 0;
+        padding: 0;
+      }
+
+      .header-bar {
+        background-color: var(--primary-color);
+        color: var(--secondary-color);
+        padding: 15px 50px;
+        font-size: 14px;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header-logo {
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      .hero-section {
+        background-color: #f8f8f8; /* Light gray background for the top section */
+        padding: 50px 0;
+        text-align: center;
+        border-bottom: 5px solid var(--accent-color);
+        position: relative;
+        overflow: hidden; /* Important: Hides the car before it slides in */
+      }
+
+      .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2; /* Ensure content is above the circle design */
+      }
+
+      .classification-title {
+        font-size: 4em;
+        font-weight: 900;
+        letter-spacing: -2px;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+      }
+
+      .circle-design {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,102,0,0.5) 0%, rgba(255,102,0,0.1) 40%, rgba(255,255,255,0) 70%);
+        z-index: 1;
+      }
+
+      /* --- Animation for the Hero Vehicle (Car) --- */
+      @keyframes carIn {
+        0% {
+          transform: translateX(150%); /* Start off-screen to the right */
+          opacity: 0; /* Start invisible */
+        }
+        70% {
+          opacity: 1; /* Become fully visible before stopping */
+        }
+        100% {
+          transform: translateX(0); /* End at its natural position */
+          opacity: 1;
+        }
+      }
+
+      .hero-vehicle {
+        width: 70%; /* Adjust size as needed */
+        max-width: 450px;
+        height: auto;
+        margin-top: 20px;
+        position: relative;
+        z-index: 2;
+        filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+        
+        /* Apply the animation */
+        animation: carIn 1.5s ease-out forwards; /* 1.5 seconds duration, ease-out timing, stays at end state */
+      }
+
+      /* Classification Sections (Cards) */
+      .vehicle-classification {
+        padding: 80px 50px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 50px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .vehicle-card {
+        background-color: var(--secondary-color);
+        padding: 30px;
+        border: 1px solid #eee;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .vehicle-card:hover {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
+      }
+
+      .vehicle-card h3 {
+        font-size: 2em;
+        font-weight: 700;
+        color: var(--accent-color);
+        margin-bottom: 10px;
+      }
+
+      .vehicle-card p {
+        font-size: 1em;
+        color: #666;
+        min-height: 40px; /* To keep card height consistent */
+      }
+
+      .vehicle-image {
+        max-width: 100%;
+        height: auto;
+        margin: 20px 0;
+        filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+      }
+
+      /* Large letter background effect (like 'B' and 'A' in the template) */
+      .bg-letter {
+        position: absolute;
+        font-size: 25vw; /* Very large, relative to viewport width */
+        font-weight: 900;
+        color: rgba(0, 0, 0, 0.05); /* Very light, subtle */
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      #car-section {
+        position: relative;
+        background-color: #f0f0f0;
+      }
+
+      #motorcycle-section {
+        position: relative;
+        background-color: #fff;
+      }
+
+      #bicycle-section {
+        position: relative;
+        background-color: #f0f0f0;
+      }
+
+      .bg-C { /* Changed to 'C' for Car */
+        top: -100px;
+        left: -50px;
+      }
+
+      .bg-M {
+        bottom: -100px;
+        right: -50px;
+      }
+      
+      .bg-B { /* Changed to 'B' for Bicycle */
+        top: -100px;
+        left: -50px;
+      }
+
+      /* AI Upload Section Styles */
+      .ai-upload-section {
+        background-color: var(--primary-color); /* Dark background for this section */
+        color: var(--secondary-color);
+        padding: 80px 50px;
+        text-align: center;
+      }
+
+      .ai-upload-section h2 {
+        font-size: 3em;
+        font-weight: 900;
+        color: var(--accent-color);
+        margin-bottom: 30px;
+        letter-spacing: -1px;
+      }
+
+      .upload-form {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #222; /* Slightly lighter dark for the form box */
+        border-radius: 8px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .form-label-custom {
+        font-size: 1.5em;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: block;
+        color: var(--secondary-color);
+      }
+
+      .form-control-file {
+        display: block;
+        width: 100%;
+        padding: 10px 15px;
+        margin-bottom: 20px;
+        border: 2px dashed #666;
+        border-radius: 5px;
+        background-color: #333;
+        color: var(--secondary-color);
+        cursor: pointer;
+        font-size: 1em;
+        text-align: center;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-control-file:hover {
+        border-color: var(--accent-color);
+      }
+
+      /* Hide default file input appearance */
+      .form-control-file::-webkit-file-upload-button {
+        visibility: hidden;
+      }
+      .form-control-file::before {
+        content: 'UPLOAD IMAGE';
+        display: inline-block;
+        background: var(--accent-color);
+        color: var(--secondary-color);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        outline: none;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1em;
+        margin-right: 10px;
+      }
+      .form-control-file:active::before {
+        background: darken(var(--accent-color), 10%);
+      }
+
+      .btn-classify {
+        background-color: var(--accent-color);
+        color: var(--secondary-color);
+        border: none;
+        padding: 12px 30px;
+        font-size: 1.2em;
+        font-weight: 700;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn-classify:hover {
+        background-color: darken(var(--accent-color), 10%);
+      }
+
+      .prediction-results {
+        margin-top: 40px;
+        background-color: #333;
+        padding: 25px;
+        border-radius: 8px;
+        display: inline-block; /* To shrink to content width */
+        max-width: 100%;
+      }
+
+      .prediction-results img {
+        max-width: 300px;
+        height: auto;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      }
+
+      .prediction-results h2 {
+        font-size: 1.8em;
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin: 0;
+      }
+      .prediction-results span {
+        color: var(--accent-color);
+      }
+
+      /* Responsive adjustments for smaller screens */
+      @media (max-width: 992px) {
+        .vehicle-classification {
+          grid-template-columns: 1fr;
+          padding: 40px 20px;
+        }
+
+        .classification-title {
+          font-size: 3em;
+        }
+
+        .header-bar {
+          padding: 15px 20px;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .ai-upload-section h2 {
+          font-size: 2.2em;
+        }
+      }
+
+    </style>
+  </head>
+
+  <body>
+
+    <div class="header-bar">
+      <div class="header-logo">VEHICLE CLASSIFICATION</div>
+    </div>
+
+    <div class="hero-section">
+      <div class="hero-content">
+        <div class="circle-design"></div>
+        <h1 class="classification-title">
+          <span style="color: var(--accent-color);">VEHICLE</span><br>
+          CLASSIFIER
+        </h1>
+        <img src="{{ url_for('static', filename='images/car.png') }}" alt="Top-down view of a car" class="hero-vehicle">
+      </div>
+    </div>
+
+    <div class="vehicle-classification">
+
+      <div class="vehicle-card" id="car-section">
+        <div class="bg-letter bg-C">C</div>
+        <h3>CAR</h3>
+        <p>A motor vehicle with four wheels designed for the transport of passengers.</p>
+        <img src="{{ url_for('static', filename='images/car1.png') }}"  alt="Side view of a white sedan car" class="vehicle-image">
+        </div>
+
+      <div class="vehicle-card" id="motorcycle-section">
+        <div class="bg-letter bg-M">M</div>
+        <h3>MOTORCYCLE</h3>
+        <p>A two-wheeled vehicle, with a small engine and wheels mounted on the same line.</p>
+        <img src="{{ url_for('static', filename='images/motor.png') }}"  alt="Side view of a black motorcycle" class="vehicle-image">
+        </div>
+
+      <div class="vehicle-card" id="bicycle-section">
+        <div class="bg-letter bg-B">B</div>
+        <h3>BICYCLE</h3>
+        <p>A vehicle composed of two wheels held in a frame, propelled by pedals.</p>
+        <img  src="{{ url_for('static', filename='images/bike.png') }}"  alt="Side view of a commuter bicycle" class="vehicle-image">
+        </div>
+
+    </div>
+
+    <div class="ai-upload-section">
+      <h2>UPLOAD & CLASSIFY</h2>
+      <form class="upload-form" action="/submit" method="post" enctype="multipart/form-data">
+        <label for="vehicleImageUpload" class="form-label-custom">Upload Your Vehicle Image Here:</label>       
+        <input type="file" class="form-control-file" name="my_image" id="vehicleImageUpload" accept="image/*">
+        <button type="submit" class="btn-classify">CLASSIFY VEHICLE</button>
+      </form>
+
+      {% if prediction %}
+      <div class="prediction-results">
+        <img src= "{{img_path}}" alt="Uploaded Image" >
+        <h2>CLASSIFICATION RESULT: <br> <span>{{TEXT}}</span> with confidence <span>{{prediction}} %</span></h2>
+      </div>
+      {% endif %}
+    </div>
+
+  </body>
+</html>
